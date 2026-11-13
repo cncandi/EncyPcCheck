@@ -2,7 +2,7 @@ using System.Drawing;
 
 namespace EncyPcCheck;
 
-/// <summary>Einheitlich gestaltete Frage-/Hinweisfenster (ersetzt MessageBox).</summary>
+/// <summary>Einheitlich gestaltete Frage-/Hinweisfenster (ersetzt MessageBox). Feste Breite, berechnete Hoehe.</summary>
 internal sealed class InfoDialog : Form
 {
     private InfoDialog(string title, string headline, string message, string yes, string? no)
@@ -11,31 +11,39 @@ internal sealed class InfoDialog : Form
         StartPosition = FormStartPosition.CenterParent;
         FormBorderStyle = FormBorderStyle.FixedDialog;
         MaximizeBox = false; MinimizeBox = false; ShowInTaskbar = false;
-        AutoScaleMode = AutoScaleMode.Dpi;
+        AutoScaleMode = AutoScaleMode.None;
         Font = new Font("Segoe UI", 9.5f);
         BackColor = Color.White;
         TopMost = true;
-        AutoSize = true; AutoSizeMode = AutoSizeMode.GrowAndShrink;
 
-        var body = new TableLayoutPanel { Dock = DockStyle.Top, AutoSize = true, ColumnCount = 1, Padding = new Padding(24, 20, 24, 12) };
-        body.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 432));
-        body.Controls.Add(new Label { Text = headline, AutoSize = true, MaximumSize = new Size(432, 0), Font = new Font("Segoe UI Semibold", 12), ForeColor = Color.FromArgb(40, 120, 190), Margin = new Padding(0, 0, 0, 8) });
-        body.Controls.Add(new Label { Text = message, AutoSize = true, MaximumSize = new Size(432, 0), ForeColor = Color.FromArgb(50, 50, 50) });
+        int w = this.S(520), pad = this.S(26), inner = w - 2 * pad;
+        var fHead = new Font("Segoe UI Semibold", 12.5f);
+        int hHead = UiHelper.TextHeight(this, headline, fHead, inner);
+        int hMsg = UiHelper.TextHeight(this, message, Font, inner);
 
-        var buttons = new FlowLayoutPanel { Dock = DockStyle.Bottom, AutoSize = true, FlowDirection = FlowDirection.RightToLeft, Padding = new Padding(24, 12, 24, 16), BackColor = Color.FromArgb(246, 247, 249) };
-        var bYes = new Button { Text = yes, DialogResult = DialogResult.Yes, AutoSize = true, MinimumSize = new Size(110, 32), Margin = new Padding(8, 0, 0, 0), TabIndex = 0 };
-        buttons.Controls.Add(bYes);
+        var bar = new Panel { Dock = DockStyle.Bottom, Height = this.S(66), BackColor = UiHelper.BarBack };
+        var bYes = UiHelper.MakeButton(this, yes, DialogResult.Yes);
+        bYes.Location = new Point(w - pad - bYes.Width, this.S(16));
+        bYes.TabIndex = 0;
+        bar.Controls.Add(bYes);
         AcceptButton = bYes;
         if (no != null)
         {
-            var bNo = new Button { Text = no, DialogResult = DialogResult.No, AutoSize = true, MinimumSize = new Size(110, 32), Margin = new Padding(8, 0, 0, 0), TabIndex = 1 };
-            buttons.Controls.Add(bNo);
+            var bNo = UiHelper.MakeButton(this, no, DialogResult.No);
+            bNo.Location = new Point(bYes.Left - this.S(10) - bNo.Width, this.S(16));
+            bNo.TabIndex = 1;
+            bar.Controls.Add(bNo);
             CancelButton = bNo;
         }
         else CancelButton = bYes;
-        Controls.Add(body);
-        Controls.Add(buttons);
-        ClientSize = new Size(480, ClientSize.Height);
+
+        var lblHead = new Label { Text = headline, Font = fHead, ForeColor = UiHelper.Accent, Location = new Point(pad, this.S(24)), Size = new Size(inner, hHead), TabStop = false };
+        var lblMsg = new Label { Text = message, Location = new Point(pad, lblHead.Bottom + this.S(10)), Size = new Size(inner, hMsg), ForeColor = Color.FromArgb(50, 50, 50), TabStop = false };
+
+        Controls.Add(lblHead);
+        Controls.Add(lblMsg);
+        Controls.Add(bar);
+        ClientSize = new Size(w, lblMsg.Bottom + this.S(26) + bar.Height);
         ActiveControl = bYes;
     }
 
