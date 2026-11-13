@@ -5,8 +5,8 @@ namespace EncyPcCheck;
 /// <summary>Gemeinsame Hilfen fuer die festen, DPI-skalierten Dialoge.</summary>
 internal static class UiHelper
 {
-    public static readonly Color Accent = Color.FromArgb(40, 120, 190);
-    public static readonly Color BarBack = Color.FromArgb(246, 247, 249);
+    public static readonly Color Accent = Theme.Green;
+    public static readonly Color BarBack = Theme.Surface;
 
     public static int S(this Control c, int v) => (int)Math.Round(v * c.DeviceDpi / 96.0);
 
@@ -18,9 +18,9 @@ internal static class UiHelper
         return sz.Height + c.S(6);
     }
 
-    public static Button MakeButton(Control owner, string text, DialogResult result) => new()
+    public static EncyButton MakeButton(Control owner, string text, DialogResult result, bool primary = false) => new()
     {
-        Text = text, DialogResult = result, UseVisualStyleBackColor = true,
+        Text = text, DialogResult = result, Primary = primary,
         Size = new Size(owner.S(112), owner.S(34)),
     };
 }

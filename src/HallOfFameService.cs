@@ -16,6 +16,8 @@ internal sealed class HofEntry
     [JsonPropertyName("gpu_name")] public string? GpuName { get; set; }
     [JsonPropertyName("vram_gb")] public double? VramGb { get; set; }
     [JsonPropertyName("disk_kind")] public string? DiskKind { get; set; }
+    [JsonPropertyName("disk_write_mbps")] public double? DiskWriteMBps { get; set; }
+    [JsonPropertyName("os_name")] public string? OsName { get; set; }
     [JsonPropertyName("created_at")] public DateTime CreatedAt { get; set; }
 }
 
@@ -108,13 +110,12 @@ internal static class HallOfFameService
         return at < 0 || FreeMail.IsMatch(email[(at + 1)..].Trim());
     }
 
-    /// <summary>Speichert den Eintrag. Je E-Mail-Adresse ein Rechner, je Rechner und Tag ein Eintrag.</summary>
+    /// <summary>Speichert den Eintrag ueber dtr_pc_submit: Je E-Mail-Adresse ein Rechner, je Rechner und Tag ein Eintrag. Ein frueherer Eintrag desselben Rechners (anderer Tag) wird ersetzt.</summary>
     public static async Task<SubmitResult> SubmitAsync(HofSubmission s, CancellationToken ct)
     {
         if (!Configured) throw new InvalidOperationException("Hall of Fame ist nicht eingerichtet.");
-        using var req = Request(HttpMethod.Post, "dtr_pc_scores");
-        req.Headers.Add("Prefer", "return=minimal");
-        req.Content = new StringContent(JsonSerializer.Serialize(s), Encoding.UTF8, "application/json");
+        using var req = Request(HttpMethod.Post, "rpc/dtr_pc_submit");
+        req.Content = new StringContent(JsonSerializer.Serialize(new { p_row = s }), Encoding.UTF8, "application/json");
         using var resp = await Http.SendAsync(req, ct);
         if (resp.StatusCode == System.Net.HttpStatusCode.Conflict)
         {
@@ -126,7 +127,7 @@ internal static class HallOfFameService
     }
 
     /// <summary>Position des Scores unter den freigegebenen Eintraegen (Rang und Gesamtzahl inklusive des eigenen Rechners).</summary>
-    public static async Task<HofRank> RankAsync(int score, CancellationToken ct)
+    public static async Task<HofRank> RankAsync(int score, CancellationToken ct, bool replacing = false)
     {
         if (!Configured) throw new InvalidOperationException("Hall of Fame ist nicht eingerichtet.");
         using var req = Request(HttpMethod.Post, "rpc/dtr_pc_rank");
@@ -135,6 +136,6 @@ internal static class HallOfFameService
         string text = await resp.Content.ReadAsStringAsync(ct);
         if (!resp.IsSuccessStatusCode) throw new Exception(Loc.T($"Positionsabfrage fehlgeschlagen (HTTP {(int)resp.StatusCode}).", $"Rank lookup failed (HTTP {(int)resp.StatusCode})."));
         var r = JsonSerializer.Deserialize<HofRank>(text) ?? new HofRank();
-        return new HofRank { Rank = r.Rank, Total = r.Total + 1 };
+        return new HofRank { Rank = r.Rank, Total = replacing ? r.Total : r.Total + 1 };
     }
 }

@@ -1,6 +1,6 @@
 {
   "packageId": "EncyPcCheck",
-  "version": "0.4.8",
+  "version": "0.4.14",
   "targetFramework": "net10.0",
   "sdkVersion": "3.0.8",
   "dependencies": [
@@ -17,12 +17,14 @@
   "requiresRestart": false,
   "reservedDomains": [],
   "permissions": [
+    "filesystem.read",
     "filesystem.write",
     "network.outbound",
     "platform.ui"
   ],
   "networkEndpoints": [
-    "https://supabase.cnc-technik.cloud"
+    "https://supabase.cnc-technik.cloud",
+    "https://crm.cnc-technik.cloud"
   ],
   "dataProcessing": {
     "personalData": true

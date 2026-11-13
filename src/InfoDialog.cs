@@ -13,7 +13,7 @@ internal sealed class InfoDialog : Form
         MaximizeBox = false; MinimizeBox = false; ShowInTaskbar = false;
         AutoScaleMode = AutoScaleMode.None;
         Font = new Font("Segoe UI", 9.5f);
-        BackColor = Color.White;
+        Theme.Init(this);
         TopMost = true;
 
         int w = this.S(520), pad = this.S(26), inner = w - 2 * pad;
@@ -22,7 +22,7 @@ internal sealed class InfoDialog : Form
         int hMsg = UiHelper.TextHeight(this, message, Font, inner);
 
         var bar = new Panel { Dock = DockStyle.Bottom, Height = this.S(66), BackColor = UiHelper.BarBack };
-        var bYes = UiHelper.MakeButton(this, yes, DialogResult.Yes);
+        var bYes = UiHelper.MakeButton(this, yes, DialogResult.Yes, primary: true);
         bYes.Location = new Point(w - pad - bYes.Width, this.S(16));
         bYes.TabIndex = 0;
         bar.Controls.Add(bYes);
@@ -38,7 +38,7 @@ internal sealed class InfoDialog : Form
         else CancelButton = bYes;
 
         var lblHead = new Label { Text = headline, Font = fHead, ForeColor = UiHelper.Accent, Location = new Point(pad, this.S(24)), Size = new Size(inner, hHead), TabStop = false };
-        var lblMsg = new Label { Text = message, Location = new Point(pad, lblHead.Bottom + this.S(10)), Size = new Size(inner, hMsg), ForeColor = Color.FromArgb(50, 50, 50), TabStop = false };
+        var lblMsg = new Label { Text = message, Location = new Point(pad, lblHead.Bottom + this.S(10)), Size = new Size(inner, hMsg), ForeColor = Theme.Ink, TabStop = false };
 
         Controls.Add(lblHead);
         Controls.Add(lblMsg);

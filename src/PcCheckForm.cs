@@ -8,11 +8,11 @@ internal sealed class PcCheckForm : Form
 {
     private static readonly Color[] Colors =
     {
-        Color.FromArgb(200, 50, 50),   // nicht geeignet
-        Color.FromArgb(230, 130, 40),  // eingeschraenkt
-        Color.FromArgb(225, 190, 40),  // bedingt
-        Color.FromArgb(140, 190, 60),  // gut
-        Color.FromArgb(40, 160, 70),   // sehr gut
+        Theme.RatingColors[0],   // nicht geeignet
+        Theme.RatingColors[1],   // eingeschraenkt
+        Theme.RatingColors[2],   // bedingt
+        Theme.RatingColors[3],   // gut
+        Theme.RatingColors[4],   // sehr gut
     };
 
     private const string SiteText = "www.cnc-technik.de";
@@ -21,20 +21,23 @@ internal sealed class PcCheckForm : Form
     private readonly Label _lblRating = new() { Font = new Font("Segoe UI", 16, FontStyle.Bold), AutoSize = true };
     private readonly Label _lblHint = new() { AutoSize = false, Height = 40, Dock = DockStyle.Top };
     private readonly Panel _scale = new() { Height = 34, Dock = DockStyle.Top };
-    private readonly Label _gpuWarn = new() { Dock = DockStyle.Top, Height = 24, Padding = new Padding(10, 3, 10, 0), ForeColor = Color.FromArgb(190, 30, 30), Font = new Font("Segoe UI", 9, FontStyle.Bold), Visible = false };
+    private readonly Label _gpuWarn = new() { Dock = DockStyle.Top, Height = 24, Padding = new Padding(10, 3, 10, 0), ForeColor = Theme.Err, Font = new Font("Segoe UI", 9, FontStyle.Bold), Visible = false };
     private readonly TableLayoutPanel _cases = new() { Dock = DockStyle.Top, Height = 104, ColumnCount = 3, RowCount = 4, Padding = new Padding(10, 4, 10, 4) };
-    private readonly ListView _list = new() { View = View.Details, FullRowSelect = true, GridLines = true, Dock = DockStyle.Fill };
+    private readonly ListView _list = new() { View = View.Details, FullRowSelect = true, Dock = DockStyle.Fill };
     private readonly Label _lblStatus = new() { AutoSize = true, Dock = DockStyle.Bottom, Height = 20, Padding = new Padding(10, 0, 10, 0) };
-    private readonly Label _note = new() { Dock = DockStyle.Bottom, Height = 66, Padding = new Padding(10, 2, 10, 2), ForeColor = SystemColors.GrayText };
-    private readonly Button _btnRun = new() { AutoSize = true };
-    private readonly Button _btnCopy = new() { AutoSize = true, Enabled = false };
-    private readonly Button _btnMail = new() { AutoSize = true, Enabled = false };
-    private readonly Button _btnHof = new() { AutoSize = true };
-    private readonly Button _btnSubmit = new() { AutoSize = true, Enabled = false };
-    private readonly Button _btnClose = new() { AutoSize = true };
+    private readonly Label _note = new() { Dock = DockStyle.Bottom, Height = 66, Padding = new Padding(10, 2, 10, 2), ForeColor = Theme.Ink2 };
+    private readonly Button _btnRun = new EncyButton { AutoSize = true };
+    private readonly Button _btnCopy = new EncyButton { AutoSize = true, Enabled = false };
+    private readonly Button _btnMail = new EncyButton { AutoSize = true, Enabled = false };
+    private readonly Button _btnHof = new EncyButton { AutoSize = true };
+    private readonly Button _btnSupport = new EncyButton { AutoSize = true, Enabled = false };
+    private readonly Button _btnSubmit = new EncyButton { AutoSize = true, Enabled = false };
+    private readonly Button _btnClose = new EncyButton { AutoSize = true };
     private readonly LinkLabel _promo = new() { Dock = DockStyle.Bottom, Height = 58, Padding = new Padding(10, 4, 10, 4) };
     private readonly ComboBox _lang = new() { DropDownStyle = ComboBoxStyle.DropDownList, Width = 100 };
 
+    private readonly ToolTip _tips = new();
+    private readonly FlowLayoutPanel _buttons;
     private CancellationTokenSource? _cts;
     private CheckResult? _result;
     private SystemData? _data;
@@ -49,6 +52,7 @@ internal sealed class PcCheckForm : Form
         ClientSize = new Size(880, 720);
         MinimumSize = new Size(760, 680);
         Font = new Font("Segoe UI", 9);
+        Theme.Init(this);
         TopMost = true; // ohne Owner-Fenster sonst hinter ENCY
         LoadIcon();
 
@@ -68,6 +72,10 @@ internal sealed class PcCheckForm : Form
         var header = new Panel { Dock = DockStyle.Top, Height = 80 };
         header.Controls.Add(top);
         header.Controls.Add(langPanel);
+        header.Controls.Add(new Panel { Dock = DockStyle.Bottom, Height = 2, BackColor = Theme.Green });
+        Theme.StyleCombo(_lang);
+        Theme.StyleList(_list, this.S(28));
+        _promo.LinkColor = Theme.Green; _promo.ActiveLinkColor = Theme.Ink; _promo.VisitedLinkColor = Theme.Green; _promo.ForeColor = Theme.Ink2;
 
         _lblHint.Padding = new Padding(10, 4, 10, 0);
         _scale.Padding = new Padding(10, 4, 10, 4);
@@ -85,18 +93,19 @@ internal sealed class PcCheckForm : Form
         var listHost = new Panel { Dock = DockStyle.Fill, Padding = new Padding(10, 6, 10, 6) };
         listHost.Controls.Add(_list);
 
-        var buttons = new FlowLayoutPanel { Dock = DockStyle.Bottom, Height = 44, FlowDirection = FlowDirection.RightToLeft, Padding = new Padding(10, 5, 10, 5) };
-        buttons.Controls.Add(_btnClose);
-        buttons.Controls.Add(_btnCopy);
-        buttons.Controls.Add(_btnMail);
-        buttons.Controls.Add(_btnSubmit);
-        buttons.Controls.Add(_btnHof);
-        buttons.Controls.Add(_btnRun);
+        _buttons = new FlowLayoutPanel { Dock = DockStyle.Bottom, Height = 44, FlowDirection = FlowDirection.RightToLeft, WrapContents = false, Padding = new Padding(10, 5, 10, 5) };
+        _buttons.Controls.Add(_btnClose);
+        _buttons.Controls.Add(_btnCopy);
+        _buttons.Controls.Add(_btnMail);
+        _buttons.Controls.Add(_btnSupport);
+        _buttons.Controls.Add(_btnSubmit);
+        _buttons.Controls.Add(_btnHof);
+        _buttons.Controls.Add(_btnRun);
 
         Controls.Add(listHost);
         Controls.Add(_lblStatus);
         Controls.Add(_note);
-        Controls.Add(buttons);
+        Controls.Add(_buttons);
         Controls.Add(_promo);
         Controls.Add(_cases);
         Controls.Add(_gpuWarn);
@@ -105,21 +114,35 @@ internal sealed class PcCheckForm : Form
         Controls.Add(header);
 
         _lang.TabIndex = 0; _btnRun.TabIndex = 1; _btnHof.TabIndex = 2; _btnSubmit.TabIndex = 3;
-        _btnMail.TabIndex = 4; _btnCopy.TabIndex = 5; _btnClose.TabIndex = 6; _promo.TabIndex = 7;
-        foreach (var b in new[] { _btnRun, _btnHof, _btnSubmit, _btnMail, _btnCopy, _btnClose })
+        _btnMail.TabIndex = 4; _btnCopy.TabIndex = 5; _btnSupport.TabIndex = 6; _btnClose.TabIndex = 7; _promo.TabIndex = 8;
+        foreach (var b in new[] { _btnRun, _btnHof, _btnSubmit, _btnSupport, _btnMail, _btnCopy, _btnClose })
         { b.MinimumSize = new Size(0, 30); b.Margin = new Padding(6, 0, 0, 0); b.Padding = new Padding(8, 0, 8, 0); }
         _btnRun.Click += async (_, _) => await RunAsync();
         _btnCopy.Click += (_, _) => CopyText();
         _btnClose.Click += (_, _) => Close();
         _btnMail.Click += (_, _) => SendMail();
         _btnHof.Click += (_, _) => ShowHallOfFame();
+        _btnSupport.Click += (_, _) => ShowSupport();
         _btnSubmit.Click += async (_, _) => await SubmitAsync();
         _promo.LinkClicked += (_, _) => OpenSite();
         _lang.SelectedIndexChanged += (_, _) => { Loc.German = _lang.SelectedIndex == 0; ApplyLanguage(); };
-        Shown += async (_, _) => await RunAsync();
+        Shown += async (_, _) => { FitButtons(); await RunAsync(); };
+        Resize += (_, _) => FitButtons();
         FormClosing += (_, _) => _cts?.Cancel();
 
         ApplyLanguage();
+    }
+
+    /// <summary>Alle Schaltflächen sichtbar halten: reicht die Breite nicht, wird die Leiste zweizeilig und höher.</summary>
+    private void FitButtons()
+    {
+        if (!IsHandleCreated) return;
+        int need = _buttons.Padding.Horizontal;
+        foreach (Control c in _buttons.Controls) need += c.GetPreferredSize(Size.Empty).Width + c.Margin.Horizontal;
+        bool two = need > _buttons.ClientSize.Width;
+        int h = this.S(two ? 90 : 46);
+        if (_buttons.WrapContents != two) _buttons.WrapContents = two;
+        if (_buttons.Height != h) _buttons.Height = h;
     }
 
     private void LoadIcon()
@@ -139,13 +162,19 @@ internal sealed class PcCheckForm : Form
     {
         Text = "ENCY PC-Check";
         _btnRun.Text = Loc.T("Erneut prüfen", "Run again");
-        _btnCopy.Text = Loc.T("Als Text kopieren", "Copy as text");
-        _btnMail.Text = Loc.T("Per E-Mail senden", "Send by e-mail");
+        _btnCopy.Text = Loc.T("Kopieren", "Copy");
+        _btnMail.Text = Loc.T("Per E-Mail", "By e-mail");
         _btnClose.Text = Loc.T("Schließen", "Close");
-        _btnHof.Text = HallOfFameService.Configured ? Loc.T("Hall of Fame ansehen (Teilnehmer)", "View Hall of Fame (participants)")
-                                                    : Loc.T("Hall of Fame (nicht eingerichtet)", "Hall of Fame (not set up)");
+        _btnSupport.Text = "Support";
+        _btnHof.Text = "Hall of Fame";
         _btnHof.Enabled = HallOfFameService.Configured;
-        _btnSubmit.Text = Loc.T("In Hall of Fame eintragen", "Enter Hall of Fame");
+        _btnSubmit.Text = Loc.T("Rechner eintragen", "Enter computer");
+        _tips.SetToolTip(_btnRun, Loc.T("Messung erneut durchführen", "Run the measurement again"));
+        _tips.SetToolTip(_btnHof, HallOfFameService.Configured ? Loc.T("Hall of Fame ansehen (nur für Teilnehmer)", "View the Hall of Fame (participants only)") : Loc.T("Hall of Fame ist nicht eingerichtet", "Hall of Fame is not set up"));
+        _tips.SetToolTip(_btnSubmit, Loc.T("Diesen Rechner in die Hall of Fame eintragen", "Enter this computer in the Hall of Fame"));
+        _tips.SetToolTip(_btnSupport, Loc.T("Ticket oder Chat mit dem Support von Datentechnik Reitz", "Ticket or chat with Datentechnik Reitz support"));
+        _tips.SetToolTip(_btnMail, Loc.T("Ergebnis per E-Mail senden", "Send the result by e-mail"));
+        _tips.SetToolTip(_btnCopy, Loc.T("Ergebnis als Text in die Zwischenablage kopieren", "Copy the result as text to the clipboard"));
         _list.Columns[0].Text = Loc.T("Komponente", "Component");
         _list.Columns[1].Text = Loc.T("Erkannt", "Detected");
         _list.Columns[2].Text = Loc.T("Wert", "Score");
@@ -163,6 +192,7 @@ internal sealed class PcCheckForm : Form
             "Datentechnik Reitz - CAD/CAM solutions since 1994: SprutCAM ENCY, robotics and CNC.   " + SiteText + "\r\n" +
             "More ENCY add-ons from us: Drawing (technical drawings from ENCY) and Assembly (align parts in assemblies) - more at cnc-technik.de.");
         _promo.LinkArea = new LinkArea(_promo.Text.IndexOf(SiteText, StringComparison.Ordinal), SiteText.Length);
+        FitButtons();
         if (_measured) Rebuild();
         else if (_running) { _lblRating.Text = Loc.T("Messung läuft", "Measuring"); }
     }
@@ -182,7 +212,7 @@ internal sealed class PcCheckForm : Form
         if (_result != null)
         {
             int mx = x0 + w * _result.Index / 100;
-            using var p = new Pen(Color.Black, 3);
+            using var p = new Pen(Theme.Ink, 3);
             g.DrawLine(p, mx, y - 6, mx, y + barH + 6);
         }
     }
@@ -195,14 +225,15 @@ internal sealed class PcCheckForm : Form
         _btnRun.Enabled = false;
         _btnCopy.Enabled = false;
         _btnMail.Enabled = false;
+        _btnSupport.Enabled = false;
         _btnSubmit.Enabled = false;
         _result = null;
         _list.Items.Clear();
         _cases.Controls.Clear();
         _gpuWarn.Visible = false;
         _lblIndex.Text = "--";
-        _lblIndex.ForeColor = SystemColors.GrayText;
-        _lblRating.ForeColor = SystemColors.GrayText;
+        _lblIndex.ForeColor = Theme.Ink3;
+        _lblRating.ForeColor = Theme.Ink3;
         _lblRating.Text = Loc.T("Messung läuft", "Measuring");
         _lblHint.Text = "";
         _scale.Invalidate();
@@ -253,13 +284,46 @@ internal sealed class PcCheckForm : Form
 
     private async Task OfferComparisonAsync()
     {
+        bool changed = false;
+        string? machine = HallOfFameService.MachineHash();
+        if (machine != null && _data != null)
+        {
+            string sig = SubmissionStore.Signature(_data);
+            if (SubmissionStore.IsUnchanged(machine, sig)) { ShowAlreadyEntered(); return; }
+            changed = SubmissionStore.HasRecord(machine);
+            if (!changed)
+            {
+                // Rechner wurde vor diesem Merker eingetragen: der Server kennt ihn dann als Teilnehmer.
+                try
+                {
+                    if (await HallOfFameService.LoadAsync(CancellationToken.None) != null)
+                    {
+                        SubmissionStore.Save(machine, sig);
+                        if (!IsDisposed) ShowAlreadyEntered();
+                        return;
+                    }
+                }
+                catch { /* Server nicht erreichbar: Frage wie bisher */ }
+            }
+        }
+        if (IsDisposed) return;
         bool yes = InfoDialog.Ask(this,
             Loc.T("Vergleich", "Comparison"),
-            Loc.T("Wie schneidet Ihr Rechner im Vergleich ab?", "How does your computer compare?"),
-            Loc.T("Möchten Sie wissen, wie Ihr Rechner im Vergleich zu anderen bewertet wird? Dazu geben Sie Ihre Firmen-E-Mail-Adresse ein und erhalten Ihre Position in der Hall of Fame.",
-                  "Would you like to know how your computer compares to others? Enter your company e-mail address to receive your position in the Hall of Fame."),
+            changed ? Loc.T("Hardware hat sich geändert", "Hardware has changed")
+                    : Loc.T("Wie schneidet Ihr Rechner im Vergleich ab?", "How does your computer compare?"),
+            changed ? Loc.T("Die Hardware dieses Rechners hat sich seit Ihrem Eintrag geändert. Möchten Sie die neuen Werte in der Hall of Fame eintragen?",
+                            "The hardware of this computer has changed since your entry. Would you like to enter the new values in the Hall of Fame?")
+                    : Loc.T("Möchten Sie wissen, wie Ihr Rechner im Vergleich zu anderen bewertet wird? Dazu geben Sie Ihre Firmen-E-Mail-Adresse ein und erhalten Ihre Position in der Hall of Fame.",
+                            "Would you like to know how your computer compares to others? Enter your company e-mail address to receive your position in the Hall of Fame."),
             Loc.T("Ja, vergleichen", "Yes, compare"), Loc.T("Nein, danke", "No, thanks"));
         if (yes) await SubmitAsync();
+    }
+
+    private void ShowAlreadyEntered()
+    {
+        _btnSubmit.Enabled = false;
+        _lblStatus.Text = Loc.T("Dieser Rechner ist bereits in der Hall of Fame eingetragen (Hardware unverändert).",
+                                "This computer is already entered in the Hall of Fame (hardware unchanged).");
     }
 
     /// <summary>Bewertung aus den gespeicherten Messwerten in der aktuellen Sprache aufbauen.</summary>
@@ -308,7 +372,16 @@ internal sealed class PcCheckForm : Form
         _scale.Invalidate();
         _btnCopy.Enabled = true;
         _btnMail.Enabled = true;
-        _btnSubmit.Enabled = HallOfFameService.Configured;
+        _btnSupport.Enabled = true;
+        _btnSubmit.Enabled = HallOfFameService.Configured && !IsAlreadyEntered();
+        if (IsAlreadyEntered()) ShowAlreadyEntered();
+    }
+
+    /// <summary>Rechner ist mit genau dieser Hardware bereits eingetragen: kein Abgleich, kein erneutes Senden.</summary>
+    private bool IsAlreadyEntered()
+    {
+        string? machine = HallOfFameService.MachineHash();
+        return machine != null && _data != null && SubmissionStore.IsUnchanged(machine, SubmissionStore.Signature(_data));
     }
 
     private void AddRow(string a, string b, string c, string d)
@@ -345,6 +418,19 @@ internal sealed class PcCheckForm : Form
         catch (Exception ex) { _lblStatus.Text = Loc.T("Webseite nicht geöffnet: ", "Website not opened: ") + ex.Message; }
     }
 
+    private void ShowSupport()
+    {
+        if (_result == null) return;
+        try
+        {
+            using var f = new SupportForm(ReportText.Build(_data, _result),
+                "ENCY PC-Check: " + Loc.T("Leistungsindex ", "Performance index ") + _result.Index,
+                () => SupportForm.CaptureForm(this));
+            f.ShowDialog(this);
+        }
+        catch (Exception ex) { _lblStatus.Text = "Support: " + ex.Message; }
+    }
+
     private void ShowHallOfFame()
     {
         try { using var f = new HallOfFameForm(); f.ShowDialog(this); }
@@ -354,10 +440,19 @@ internal sealed class PcCheckForm : Form
     private async Task SubmitAsync()
     {
         if (_result == null || _data == null) return;
+        if (IsAlreadyEntered()) { ShowAlreadyEntered(); return; }
         string? machine = HallOfFameService.MachineHash();
         if (machine == null)
         {
             _lblStatus.Text = Loc.T("Der Rechner lässt sich nicht eindeutig erkennen. Eintrag nicht möglich.", "This computer cannot be identified uniquely. Entry not possible.");
+            return;
+        }
+        if (SubmissionStore.EnteredToday(machine))
+        {
+            string m = Loc.T("Für diesen Rechner wurde heute bereits ein Eintrag gesendet. Ein neuer Eintrag ist morgen wieder möglich.",
+                             "An entry for this computer has already been sent today. A new entry is possible again tomorrow.");
+            _lblStatus.Text = m;
+            InfoDialog.Show(this, "Hall of Fame", Loc.T("Nicht möglich", "Not possible"), m);
             return;
         }
         using var dlg = new SubmitForm();
@@ -384,22 +479,30 @@ internal sealed class PcCheckForm : Form
                 Email = dlg.Email.ToLowerInvariant(),
                 MachineHash = machine,
             };
+            // Position vor dem Eintrag ermitteln: Die Gesamtzahl enthaelt dann den eigenen Eintrag noch nicht
+            // (RankAsync zaehlt ihn dazu), egal ob der Server neue Eintraege sofort freigibt.
+            bool replacing = SubmissionStore.HasRecord(machine);
+            var rank = await HallOfFameService.RankAsync(_result.Index, CancellationToken.None, replacing);
             var saved = await HallOfFameService.SubmitAsync(s, CancellationToken.None);
-            var rank = await HallOfFameService.RankAsync(_result.Index, CancellationToken.None);
+            if (saved != SubmitResult.DuplicateEmail) SubmissionStore.Save(machine, SubmissionStore.Signature(_data));
             string pos = Loc.T($"Ihre Position: Platz {rank.Rank} von {rank.Total} (Score {_result.Index}).",
                                $"Your position: rank {rank.Rank} of {rank.Total} (score {_result.Index}).");
             string msg = saved == SubmitResult.Saved
-                ? pos + "\n\n" + Loc.T("Ihr Eintrag erscheint nach Freigabe durch Datentechnik Reitz in der Hall of Fame.",
-                                       "Your entry will appear in the Hall of Fame after approval by Datentechnik Reitz.")
+                ? pos + "\n\n" + (replacing ? Loc.T("Ihr bisheriger Eintrag wurde durch die neuen Werte ersetzt.", "Your previous entry has been replaced by the new values.")
+                                   : Loc.T("Ihr Eintrag wurde gespeichert und ist in der Hall of Fame sichtbar.", "Your entry has been saved and is visible in the Hall of Fame."))
                 : saved == SubmitResult.DuplicateEmail
-                ? pos + "\n\n" + Loc.T("Mit dieser E-Mail-Adresse ist bereits ein Rechner eingetragen. Je E-Mail-Adresse ist nur ein Rechner möglich.",
-                                       "A computer is already entered with this e-mail address. Only one computer per e-mail address is possible.")
-                : pos + "\n\n" + Loc.T("Für diesen Rechner wurde heute bereits ein Eintrag gespeichert. Ein neuer Eintrag ist morgen wieder möglich.",
-                                       "An entry for this computer has already been saved today. A new entry is possible again tomorrow.");
+                ? Loc.T("Nicht gespeichert: Mit dieser E-Mail-Adresse ist bereits ein Rechner eingetragen. Je E-Mail-Adresse ist nur ein Rechner möglich.",
+                        "Not saved: A computer is already entered with this e-mail address. Only one computer per e-mail address is possible.")
+                : Loc.T("Nicht gespeichert: Für diesen Rechner wurde heute bereits ein Eintrag gespeichert. Ein neuer Eintrag ist morgen wieder möglich.",
+                        "Not saved: An entry for this computer has already been saved today. A new entry is possible again tomorrow.");
             if (!IsDisposed)
             {
-                _lblStatus.Text = pos;
-                InfoDialog.Show(this, "Hall of Fame", Loc.T($"Platz {rank.Rank} von {rank.Total}", $"Rank {rank.Rank} of {rank.Total}"), msg);
+                // Position nur bei gespeichertem Eintrag: bei Ablehnung wurde der neue Score nicht eingetragen.
+                if (saved == SubmitResult.Saved) _lblStatus.Text = pos;
+                string head = saved == SubmitResult.Saved
+                    ? Loc.T($"Platz {rank.Rank} von {rank.Total}", $"Rank {rank.Rank} of {rank.Total}")
+                    : Loc.T("Nicht gespeichert", "Not saved");
+                InfoDialog.Show(this, "Hall of Fame", head, msg);
             }
         }
         catch (Exception ex)

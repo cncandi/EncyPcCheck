@@ -7,7 +7,7 @@ internal sealed class SubmitForm : Form
 {
     private readonly TextBox _name = new() { MaxLength = 30 };
     private readonly TextBox _email = new() { MaxLength = 120 };
-    private readonly Label _mailHint = new() { ForeColor = Color.Firebrick, Visible = false, TabStop = false };
+    private readonly Label _mailHint = new() { ForeColor = Theme.Err, Visible = false, TabStop = false };
     private readonly CheckBox _consent = new();
     private readonly Button _ok;
     private readonly Button _cancel;
@@ -23,35 +23,37 @@ internal sealed class SubmitForm : Form
         MaximizeBox = false; MinimizeBox = false; ShowInTaskbar = false;
         AutoScaleMode = AutoScaleMode.None;
         Font = new Font("Segoe UI", 9.5f);
-        BackColor = Color.White;
+        Theme.Init(this);
         TopMost = true;
 
         int w = this.S(540), pad = this.S(26), inner = w - 2 * pad;
 
         // Kopfband
-        var head = new Panel { BackColor = UiHelper.Accent, Dock = DockStyle.Top, Height = this.S(88) };
+        var head = new Panel { BackColor = Theme.Surface, Dock = DockStyle.Top, Height = this.S(88) };
+        head.Controls.Add(new Panel { Dock = DockStyle.Bottom, Height = this.S(2), BackColor = Theme.Green });
         head.Controls.Add(new Label
         {
             Text = Loc.T("Vergleich mit anderen Rechnern", "Compare with other computers"),
-            Font = new Font("Segoe UI Semibold", 13.5f), ForeColor = Color.White, BackColor = Color.Transparent,
+            Font = new Font("Segoe UI Semibold", 13.5f), ForeColor = Theme.Ink, BackColor = Color.Transparent,
             Location = new Point(pad, this.S(12)), Size = new Size(inner, this.S(30)), TabStop = false,
         });
         head.Controls.Add(new Label
         {
             Text = Loc.T("Erfahren Sie Ihre Position im Vergleich zu anderen Rechnern. Dazu genügen Name und Firmen-E-Mail-Adresse.",
                          "Find out how your computer ranks against others. Name and company e-mail address are all you need."),
-            ForeColor = Color.FromArgb(228, 240, 250), BackColor = Color.Transparent,
+            ForeColor = Theme.Ink2, BackColor = Color.Transparent,
             Location = new Point(pad, this.S(44)), Size = new Size(inner, this.S(38)), TabStop = false,
         });
 
-        var body = new Panel { Dock = DockStyle.Fill, BackColor = Color.White };
+        var body = new Panel { Dock = DockStyle.Fill, BackColor = Theme.Bg };
         var fLabel = new Font("Segoe UI Semibold", 9.5f);
         int y = this.S(20);
 
-        Label Lbl(string t) { var l = new Label { Text = t, Font = fLabel, ForeColor = Color.FromArgb(60, 60, 60), Location = new Point(pad, y), Size = new Size(inner, this.S(22)), TabStop = false }; y += this.S(24); return l; }
+        Label Lbl(string t) { var l = new Label { Text = t, Font = fLabel, ForeColor = Theme.Ink, Location = new Point(pad, y), Size = new Size(inner, this.S(22)), TabStop = false }; y += this.S(24); return l; }
 
         body.Controls.Add(Lbl(Loc.T("Name oder Firma (2 bis 30 Zeichen)", "Name or company (2 to 30 characters)")));
         _name.Font = new Font("Segoe UI", 10.5f);
+        Theme.StyleText(_name); Theme.StyleText(_email);
         _name.Location = new Point(pad, y); _name.Width = inner; body.Controls.Add(_name);
         y += _name.Height + this.S(16);
 
@@ -71,10 +73,10 @@ internal sealed class SubmitForm : Form
         string consent = Loc.T(
             "Ich bin einverstanden, dass mein Name, der Score und die Hardwaredaten (Prozessor, Arbeitsspeicher, Grafik, " +
             "Datenträgertyp, Messwerte) sowie meine E-Mail-Adresse und eine anonymisierte Rechnerkennung an Datentechnik Reitz " +
-            "übertragen werden. Öffentlich angezeigt werden nach Freigabe nur Name, Score und Hardwaredaten, nicht die " +
+            "übertragen werden. Öffentlich angezeigt werden nur Name, Score und Hardwaredaten, nicht die " +
             "E-Mail-Adresse. Je E-Mail-Adresse ist ein Rechner möglich. Löschung auf Anfrage: reitz@cnc-technik.de.",
             "I agree that my name, score and hardware data (processor, memory, graphics, drive type, measured values) " +
-            "as well as my e-mail address and an anonymised computer ID are sent to Datentechnik Reitz. Once approved, only " +
+            "as well as my e-mail address and an anonymised computer ID are sent to Datentechnik Reitz. Only " +
             "name, score and hardware data are shown publicly, not the e-mail address. One computer per e-mail address. " +
             "Deletion on request: reitz@cnc-technik.de.");
         int hCons = UiHelper.TextHeight(this, consent, Font, inner - this.S(26)) + this.S(4);
@@ -86,7 +88,7 @@ internal sealed class SubmitForm : Form
         y += hCons + this.S(24);
 
         var bar = new Panel { Dock = DockStyle.Bottom, Height = this.S(66), BackColor = UiHelper.BarBack };
-        _ok = UiHelper.MakeButton(this, Loc.T("Senden", "Send"), DialogResult.OK);
+        _ok = UiHelper.MakeButton(this, Loc.T("Senden", "Send"), DialogResult.OK, primary: true);
         _cancel = UiHelper.MakeButton(this, Loc.T("Abbrechen", "Cancel"), DialogResult.Cancel);
         _cancel.Location = new Point(w - pad - _cancel.Width, this.S(16));
         _ok.Location = new Point(_cancel.Left - this.S(10) - _ok.Width, this.S(16));
