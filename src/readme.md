@@ -5,7 +5,7 @@
 (256 MB temporary write test) and compares them with the ENCY system requirements. The window language follows the
 Windows language and can be switched between German and English. Results can be sent by e-mail (opens your mail
 program) or copied as text. Optionally you can enter the Hall of Fame with a name of your choice and your e-mail address (not published) after explicit
-consent; company e-mail addresses only (no Gmail, Web.de, Yahoo etc.), one computer per e-mail address; the Hall of Fame can only be viewed by participants who have entered their computer. Changed hardware replaces your earlier entry. Optionally, customers can sign in to the Datentechnik Reitz customer portal (Support button) to send a ticket or chat messages and screenshots; the sign-in token is stored encrypted for the current Windows user. Without a Hall of Fame or Support action there is no network access. A short note about
+consent; company e-mail addresses only (no Gmail, Web.de, Yahoo etc.), one computer per e-mail address; the Hall of Fame can only be viewed by participants who have entered their computer. Changed hardware replaces your earlier entry. Optionally, customers can sign in to the Datentechnik Reitz customer portal (Support button) to send a ticket or chat messages and screenshots; the sign-in token is stored encrypted for the current Windows user. A small floating widget (starts with ENCY, attached to the top right corner of the ENCY window) shows CPU, GPU, memory and per-core load of ENCY; it can be collapsed, moved or hidden. If a customer portal sign-in is saved, the widget renews it at ENCY start and checks for unread chat messages about once a minute. Without a Hall of Fame or Support action and without a saved portal sign-in there is no network access. A short note about
 Datentechnik Reitz (www.cnc-technik.de) and our other ENCY add-ons (Drawing, Assembly) is shown in the window; the link
 opens in your browser only on click. Scores are computed locally and cannot be verified.
 
@@ -54,7 +54,7 @@ Das Fenster enthält einen Hinweis auf Datentechnik Reitz (www.cnc-technik.de) u
 
 ## Datenschutz
 
-Ohne Hall-of-Fame- oder Support-Aktion findet kein Netzwerkzugriff statt und es werden keine Daten übertragen.
+Ein kleines schwebendes Widget (startet mit ENCY, haftet an der oberen rechten Ecke des ENCY-Fensters) zeigt CPU, GPU, Arbeitsspeicher und Kernauslastung von ENCY; es lässt sich einklappen, verschieben und ausblenden. Ist eine Anmeldung am Kundenportal gespeichert, erneuert das Widget sie beim ENCY-Start und fragt etwa einmal pro Minute ungelesene Chat-Nachrichten ab (https://crm.cnc-technik.cloud). Ohne Hall-of-Fame- oder Support-Aktion und ohne gespeicherte Portal-Anmeldung findet kein Netzwerkzugriff statt und es werden keine Daten übertragen.
 Netzwerkzugriff nur bei „Hall of Fame ansehen“ und „Rechner eintragen“ auf https://supabase.cnc-technik.cloud (HTTPS) sowie bei „Support“ (Anmeldung am Kundenportal, Ticket, Chat, Screenshot) auf https://crm.cnc-technik.cloud (HTTPS). Die Anmeldung läuft über den Authentifizierungsdienst unter https://supabase.cnc-technik.cloud. Das Passwort wird nicht gespeichert; das Anmelde-Token wird verschlüsselt für den aktuellen Windows-Benutzer abgelegt.
 
 

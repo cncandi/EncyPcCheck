@@ -10,6 +10,12 @@
                 "id": "Extension.Utility.EncyPcCheck",
                 "icon_path": "./EncyPcCheck_button.png"
             }
+        },
+        {
+            "Global": {
+                "id": "Extension.Global.EncyPcCheck",
+                "name": "PC-Check Auslastungsanzeige"
+            }
         }
     ]
 }

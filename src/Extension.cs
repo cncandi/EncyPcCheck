@@ -19,6 +19,7 @@ public class UtilityExtension : IExtension, IExtensionUtility
         resultStatus = default;
         try
         {
+            WidgetHost.EnsureStarted(); // Widget wieder einblenden, falls ausgeblendet
             Exception? error = null;
             var t = new Thread(() =>
             {

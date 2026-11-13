@@ -35,6 +35,8 @@ public class ExtensionFactory : IExtensionFactory
             ret = default;
             if (extensionIdent == "Extension.Utility.EncyPcCheck")
                 return new UtilityExtension();
+            if (extensionIdent == "Extension.Global.EncyPcCheck")
+                return new GlobalExtension();
             throw new Exception("Unknown extension identifier: " + extensionIdent);
         }
         catch (Exception e)
