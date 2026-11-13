@@ -104,6 +104,10 @@ internal sealed class PcCheckForm : Form
         Controls.Add(_scale);
         Controls.Add(header);
 
+        _lang.TabIndex = 0; _btnRun.TabIndex = 1; _btnHof.TabIndex = 2; _btnSubmit.TabIndex = 3;
+        _btnMail.TabIndex = 4; _btnCopy.TabIndex = 5; _btnClose.TabIndex = 6; _promo.TabIndex = 7;
+        foreach (var b in new[] { _btnRun, _btnHof, _btnSubmit, _btnMail, _btnCopy, _btnClose })
+        { b.MinimumSize = new Size(0, 30); b.Margin = new Padding(6, 0, 0, 0); b.Padding = new Padding(8, 0, 8, 0); }
         _btnRun.Click += async (_, _) => await RunAsync();
         _btnCopy.Click += (_, _) => CopyText();
         _btnClose.Click += (_, _) => Close();
@@ -249,11 +253,13 @@ internal sealed class PcCheckForm : Form
 
     private async Task OfferComparisonAsync()
     {
-        var a = MessageBox.Show(this,
-            Loc.T("Möchten Sie wissen, wie Ihr Rechner im Vergleich zu anderen bewertet wird?\n\nDazu geben Sie Ihre E-Mail-Adresse ein und erhalten Ihre Position in der Hall of Fame.",
-                  "Would you like to know how your computer compares to others?\n\nEnter your e-mail address to receive your position in the Hall of Fame."),
-            Loc.T("Vergleich", "Comparison"), MessageBoxButtons.YesNo, MessageBoxIcon.Question);
-        if (a == DialogResult.Yes) await SubmitAsync();
+        bool yes = InfoDialog.Ask(this,
+            Loc.T("Vergleich", "Comparison"),
+            Loc.T("Wie schneidet Ihr Rechner im Vergleich ab?", "How does your computer compare?"),
+            Loc.T("Möchten Sie wissen, wie Ihr Rechner im Vergleich zu anderen bewertet wird? Dazu geben Sie Ihre Firmen-E-Mail-Adresse ein und erhalten Ihre Position in der Hall of Fame.",
+                  "Would you like to know how your computer compares to others? Enter your company e-mail address to receive your position in the Hall of Fame."),
+            Loc.T("Ja, vergleichen", "Yes, compare"), Loc.T("Nein, danke", "No, thanks"));
+        if (yes) await SubmitAsync();
     }
 
     /// <summary>Bewertung aus den gespeicherten Messwerten in der aktuellen Sprache aufbauen.</summary>
@@ -393,7 +399,7 @@ internal sealed class PcCheckForm : Form
             if (!IsDisposed)
             {
                 _lblStatus.Text = pos;
-                MessageBox.Show(this, msg, "Hall of Fame", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                InfoDialog.Show(this, "Hall of Fame", Loc.T($"Platz {rank.Rank} von {rank.Total}", $"Rank {rank.Rank} of {rank.Total}"), msg);
             }
         }
         catch (Exception ex)
