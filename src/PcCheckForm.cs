@@ -138,7 +138,7 @@ internal sealed class PcCheckForm : Form
         _btnCopy.Text = Loc.T("Als Text kopieren", "Copy as text");
         _btnMail.Text = Loc.T("Per E-Mail senden", "Send by e-mail");
         _btnClose.Text = Loc.T("Schließen", "Close");
-        _btnHof.Text = HallOfFameService.Configured ? Loc.T("Hall of Fame ansehen", "View Hall of Fame")
+        _btnHof.Text = HallOfFameService.Configured ? Loc.T("Hall of Fame ansehen (Teilnehmer)", "View Hall of Fame (participants)")
                                                     : Loc.T("Hall of Fame (nicht eingerichtet)", "Hall of Fame (not set up)");
         _btnHof.Enabled = HallOfFameService.Configured;
         _btnSubmit.Text = Loc.T("In Hall of Fame eintragen", "Enter Hall of Fame");
@@ -207,6 +207,7 @@ internal sealed class PcCheckForm : Form
         var ct = _cts.Token;
         void Status(string de, string en) { try { if (!IsDisposed) BeginInvoke(() => _lblStatus.Text = Loc.T(de, en)); } catch { } }
 
+        bool offer = false;
         try
         {
             var outcome = await Task.Run(() =>
@@ -227,6 +228,7 @@ internal sealed class PcCheckForm : Form
             _measured = true;
             Rebuild();
             _lblStatus.Text = Loc.T("Messung abgeschlossen.", "Measurement complete.");
+            offer = true;
         }
         catch (Exception ex)
         {
@@ -242,6 +244,16 @@ internal sealed class PcCheckForm : Form
             _running = false;
             if (!IsDisposed) _btnRun.Enabled = true;
         }
+        if (offer && !IsDisposed && HallOfFameService.Configured) await OfferComparisonAsync();
+    }
+
+    private async Task OfferComparisonAsync()
+    {
+        var a = MessageBox.Show(this,
+            Loc.T("Möchten Sie wissen, wie Ihr Rechner im Vergleich zu anderen bewertet wird?\n\nDazu geben Sie Ihre E-Mail-Adresse ein und erhalten Ihre Position in der Hall of Fame.",
+                  "Would you like to know how your computer compares to others?\n\nEnter your e-mail address to receive your position in the Hall of Fame."),
+            Loc.T("Vergleich", "Comparison"), MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+        if (a == DialogResult.Yes) await SubmitAsync();
     }
 
     /// <summary>Bewertung aus den gespeicherten Messwerten in der aktuellen Sprache aufbauen.</summary>
@@ -336,6 +348,12 @@ internal sealed class PcCheckForm : Form
     private async Task SubmitAsync()
     {
         if (_result == null || _data == null) return;
+        string? machine = HallOfFameService.MachineHash();
+        if (machine == null)
+        {
+            _lblStatus.Text = Loc.T("Der Rechner lässt sich nicht eindeutig erkennen. Eintrag nicht möglich.", "This computer cannot be identified uniquely. Entry not possible.");
+            return;
+        }
         using var dlg = new SubmitForm();
         if (dlg.ShowDialog(this) != DialogResult.OK) return;
         _btnSubmit.Enabled = false;
@@ -357,10 +375,26 @@ internal sealed class PcCheckForm : Form
                 CpuSingle = Math.Round(_single, 1),
                 CpuMulti = Math.Round(_multi, 1),
                 OsName = _data.OsName,
+                Email = dlg.Email.ToLowerInvariant(),
+                MachineHash = machine,
             };
-            await HallOfFameService.SubmitAsync(s, CancellationToken.None);
-            if (!IsDisposed) _lblStatus.Text = Loc.T("Eintrag gesendet. Er erscheint nach Freigabe durch Datentechnik Reitz.",
-                                                     "Entry sent. It will appear after approval by Datentechnik Reitz.");
+            var saved = await HallOfFameService.SubmitAsync(s, CancellationToken.None);
+            var rank = await HallOfFameService.RankAsync(_result.Index, CancellationToken.None);
+            string pos = Loc.T($"Ihre Position: Platz {rank.Rank} von {rank.Total} (Score {_result.Index}).",
+                               $"Your position: rank {rank.Rank} of {rank.Total} (score {_result.Index}).");
+            string msg = saved == SubmitResult.Saved
+                ? pos + "\n\n" + Loc.T("Ihr Eintrag erscheint nach Freigabe durch Datentechnik Reitz in der Hall of Fame.",
+                                       "Your entry will appear in the Hall of Fame after approval by Datentechnik Reitz.")
+                : saved == SubmitResult.DuplicateEmail
+                ? pos + "\n\n" + Loc.T("Mit dieser E-Mail-Adresse ist bereits ein Rechner eingetragen. Je E-Mail-Adresse ist nur ein Rechner möglich.",
+                                       "A computer is already entered with this e-mail address. Only one computer per e-mail address is possible.")
+                : pos + "\n\n" + Loc.T("Für diesen Rechner wurde heute bereits ein Eintrag gespeichert. Ein neuer Eintrag ist morgen wieder möglich.",
+                                       "An entry for this computer has already been saved today. A new entry is possible again tomorrow.");
+            if (!IsDisposed)
+            {
+                _lblStatus.Text = pos;
+                MessageBox.Show(this, msg, "Hall of Fame", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
         }
         catch (Exception ex)
         {

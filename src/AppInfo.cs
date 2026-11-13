@@ -2,7 +2,7 @@ namespace EncyPcCheck;
 
 internal static class AppInfo
 {
-    public const string Version = "0.4.2";
+    public const string Version = "0.4.6";
     public const string WebsiteUrl = "https://www.cnc-technik.de";
 
     // Oeffentliche Supabase-Adresse (DTR, Hostinger) und ANON-Schluessel.

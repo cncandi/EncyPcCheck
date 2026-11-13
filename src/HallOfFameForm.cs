@@ -37,6 +37,13 @@ internal sealed class HallOfFameForm : Form
         {
             var rows = await HallOfFameService.LoadAsync(_cts.Token);
             if (IsDisposed) return;
+            if (rows == null)
+            {
+                _status.Text = Loc.T(
+                    "Die Hall of Fame ist nur für Teilnehmer einsehbar. Bitte Ihren Rechner eintragen; nach der Freigabe haben Sie Einsicht.",
+                    "The Hall of Fame can only be viewed by participants. Please enter your computer; after approval you will have access.");
+                return;
+            }
             int rank = 1;
             foreach (var e in rows)
             {

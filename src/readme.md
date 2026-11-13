@@ -4,8 +4,8 @@
 "Not suitable". Besides the overall index it rates four use cases: large parts with many details, fast toolpath calculation, detailed simulation and simple parts. Without a standard NVIDIA GeForce graphics card (no NVIDIA, or NVIDIA Quadro) every rating is limited to "Limited suitability". It measures processor (short single-core and all-core test), memory, graphics card and drive speed
 (256 MB temporary write test) and compares them with the ENCY system requirements. The window language follows the
 Windows language and can be switched between German and English. Results can be sent by e-mail (opens your mail
-program) or copied as text. Optionally you can enter the Hall of Fame with a name of your choice after explicit
-consent; entries appear after approval. Without a Hall of Fame action there is no network access. A short note about
+program) or copied as text. Optionally you can enter the Hall of Fame with a name of your choice and your e-mail address (not published) after explicit
+consent; company e-mail addresses only (no Gmail, Web.de, Yahoo etc.), one computer per e-mail address; entries appear after approval; the Hall of Fame can only be viewed by participants with an approved entry. Without a Hall of Fame action there is no network access. A short note about
 Datentechnik Reitz (www.cnc-technik.de) and our other ENCY add-ons (Drawing, Assembly) is shown in the window; the link
 opens in your browser only on click. Scores are computed locally and cannot be verified.
 
@@ -41,10 +41,10 @@ Test mit dem eigenen Projekt. Über "Als Text kopieren" lässt sich das Ergebnis
 ## Mail und Hall of Fame
 
 - **Per E-Mail senden:** öffnet das Standard-Mailprogramm mit dem Ergebnis als Text (ohne Empfänger).
-- **Hall of Fame:** Optional kann das Ergebnis mit einem selbst gewählten Namen eingetragen werden. Übertragen werden
-  Name, Score, Bewertung, Prozessor, Threads, Arbeitsspeicher, Grafikkarte, Grafikspeicher, Datenträgertyp,
-  Messwerte, Windows-Version und Programmversion. Das Senden erfolgt nur nach ausdrücklicher Zustimmung im Dialog.
-  Neue Einträge erscheinen erst nach Freigabe durch Datentechnik Reitz. Löschung auf Anfrage: reitz@cnc-technik.de.
+- **Hall of Fame:** Optional kann das Ergebnis mit einem selbst gewählten Namen und einer E-Mail-Adresse eingetragen werden (nur Firmenadressen, keine privaten Maildienste wie Gmail, Web.de, Yahoo; je E-Mail-Adresse ein Rechner, je Rechner und Tag ein Eintrag). Übertragen werden
+  Name, E-Mail-Adresse, anonymisierte Rechnerkennung (SHA-256-Wert der Windows-Maschinen-ID), Score, Bewertung, Prozessor, Threads, Arbeitsspeicher, Grafikkarte, Grafikspeicher, Datenträgertyp,
+  Messwerte, Windows-Version und Programmversion. Nach der Messung fragt das Add-on, ob Sie den Vergleich mit anderen Rechnern wünschen; dann erhalten Sie Ihre Position in der Hall of Fame. Das Senden erfolgt nur nach ausdrücklicher Zustimmung im Dialog.
+  Die E-Mail-Adresse wird nicht veröffentlicht. Die Hall of Fame (Name, Score, Rechnerkonfiguration) ist nur für Teilnehmer einsehbar, deren Rechner freigegeben eingetragen ist. Neue Einträge erscheinen erst nach Freigabe durch Datentechnik Reitz. Löschung auf Anfrage: reitz@cnc-technik.de.
   Der Score wird auf dem eigenen Rechner berechnet und kann nicht überprüft werden.
 
 ## Werbung
