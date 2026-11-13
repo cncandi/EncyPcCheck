@@ -1,0 +1,30 @@
+{
+  "packageId": "EncyPcCheck",
+  "version": "0.4.2",
+  "targetFramework": "net10.0",
+  "sdkVersion": "3.0.8",
+  "dependencies": [
+    {
+      "id": "EncySoftware.CAMAPI.SDK.Net",
+      "version": "3.0.8"
+    }
+  ],
+  "description": "Prüft die Leistung des Rechners (CPU, RAM, Grafik, Datenträger), zeigt einen Leistungsindex für ENCY und bietet eine optionale Hall of Fame.",
+  "author": "CAD/CAM Systeme Datentechnik Reitz GmbH & Co. KG",
+  "category": "other",
+  "tags": "Utility, ency-extension, benchmark, system, hall-of-fame",
+  "iconPath": "EncyPcCheck.png",
+  "requiresRestart": false,
+  "reservedDomains": [],
+  "permissions": [
+    "filesystem.write",
+    "network.outbound",
+    "platform.ui"
+  ],
+  "networkEndpoints": [
+    "https://supabase.cnc-technik.cloud"
+  ],
+  "dataProcessing": {
+    "personalData": true
+  }
+}

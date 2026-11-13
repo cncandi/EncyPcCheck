@@ -1,0 +1,15 @@
+{
+    "name": "EncyPcCheck",
+    "description": "Prüft die Leistung des Rechners (CPU, RAM, Grafik, Datenträger) und zeigt einen Leistungsindex für ENCY. / Checks PC performance and shows a performance index for ENCY.",
+    "module_path": "${extensionJsonFolder}/EncyPcCheck.dll",
+    "extensions": [
+        {
+            "utility": {
+                "name": "EncyPcCheck",
+                "caption": "PC-Check",
+                "id": "Extension.Utility.EncyPcCheck",
+                "icon_path": "./EncyPcCheck_button.png"
+            }
+        }
+    ]
+}

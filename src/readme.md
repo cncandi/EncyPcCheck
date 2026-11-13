@@ -1,0 +1,62 @@
+# ENCY PC-Check
+
+**English:** Checks your PC and shows a performance index (0 to 100) for working with ENCY, from "Very well suited" to
+"Not suitable". Besides the overall index it rates four use cases: large parts with many details, fast toolpath calculation, detailed simulation and simple parts. Without a standard NVIDIA GeForce graphics card (no NVIDIA, or NVIDIA Quadro) every rating is limited to "Limited suitability". It measures processor (short single-core and all-core test), memory, graphics card and drive speed
+(256 MB temporary write test) and compares them with the ENCY system requirements. The window language follows the
+Windows language and can be switched between German and English. Results can be sent by e-mail (opens your mail
+program) or copied as text. Optionally you can enter the Hall of Fame with a name of your choice after explicit
+consent; entries appear after approval. Without a Hall of Fame action there is no network access. A short note about
+Datentechnik Reitz (www.cnc-technik.de) and our other ENCY add-ons (Drawing, Assembly) is shown in the window; the link
+opens in your browser only on click. Scores are computed locally and cannot be verified.
+
+---
+
+**Deutsch:**
+
+Prüft die Leistung des Rechners und zeigt einen Leistungsindex (0 bis 100) für den Einsatz mit ENCY.
+Bewertung von "Sehr gut geeignet" bis "Nicht geeignet".
+
+## Verwendung
+
+Im Menü der Hilfsprogramme in ENCY den Eintrag **PC-Check** starten. Die Messung dauert etwa 10 bis 15 Sekunden.
+
+## Bewertung nach Anwendungsfall
+
+Neben dem Gesamtindex gibt es vier Bewertungen: große Bauteile mit vielen Details, schnelle Berechnung, detaillierte Simulation und einfache Teile. Ohne normale NVIDIA-GeForce-Grafikkarte (keine NVIDIA oder NVIDIA Quadro) ist jede Bewertung auf „Eingeschränkt geeignet“ begrenzt.
+
+## Was wird geprüft
+
+- Prozessor: Kurzmessung mit einem Kern und mit allen Kernen
+- Arbeitsspeicher: installierte Menge
+- Grafik: erkannte Grafikkarte und Grafikspeicher
+- Datenträger: Typ (SSD/HDD) und Schreibrate im Temp-Ordner (256 MB, wird danach gelöscht)
+- Betriebssystem: Windows-Version
+
+## Bewertung
+
+Eckwerte nach den ENCY-Systemanforderungen (Minimum für kleine und mittlere Projekte, Empfehlung für große Projekte).
+Gewichtung und Benchmark-Referenzwerte sind Richtwerte. Das Ergebnis ist eine Momentaufnahme und ersetzt keinen
+Test mit dem eigenen Projekt. Über "Als Text kopieren" lässt sich das Ergebnis weitergeben.
+
+## Mail und Hall of Fame
+
+- **Per E-Mail senden:** öffnet das Standard-Mailprogramm mit dem Ergebnis als Text (ohne Empfänger).
+- **Hall of Fame:** Optional kann das Ergebnis mit einem selbst gewählten Namen eingetragen werden. Übertragen werden
+  Name, Score, Bewertung, Prozessor, Threads, Arbeitsspeicher, Grafikkarte, Grafikspeicher, Datenträgertyp,
+  Messwerte, Windows-Version und Programmversion. Das Senden erfolgt nur nach ausdrücklicher Zustimmung im Dialog.
+  Neue Einträge erscheinen erst nach Freigabe durch Datentechnik Reitz. Löschung auf Anfrage: reitz@cnc-technik.de.
+  Der Score wird auf dem eigenen Rechner berechnet und kann nicht überprüft werden.
+
+## Werbung
+
+Das Fenster enthält einen Hinweis auf Datentechnik Reitz (www.cnc-technik.de) und auf weitere ENCY-Add-ons von uns
+(Drawing, Assembly). Der Link wird nur auf Klick im Browser geöffnet.
+
+## Datenschutz
+
+Ohne Hall-of-Fame-Eintrag findet kein Netzwerkzugriff statt und es werden keine Daten übertragen.
+Netzwerkzugriff nur bei „Hall of Fame ansehen“ und „In Hall of Fame eintragen“ auf https://supabase.cnc-technik.cloud (HTTPS).
+
+
+
+Hersteller: CAD/CAM Systeme Datentechnik Reitz GmbH & Co. KG
